@@ -13,6 +13,9 @@ local M = {}
 
 function M.is_managed(file)
     local file = vim.fn.expand(file)
+    if file == nil or file == '' then
+        return
+    end
     local out = chezmoi(string.format("source-path %s", file))
     if string.find(out, 'does not exist') == nil then
         return true
