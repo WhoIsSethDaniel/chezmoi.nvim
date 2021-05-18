@@ -4,18 +4,48 @@
 
 (currently very primitive)
 
-## Usage
+## Installation
 
-Install this plugin like any other plugin. Make certain you have chezmoi installed.
+Install this plugin like any other plugin. Make certain you have [chezmoi](https://github.com/twpayne/chezmoi) 
+installed.
+
+## Configuration
+
+Somewhere in your configuration you will need:
+```
+lua <<EOF
+require"chezmoi".setup()
+EOF
+```
+You can pass configuration to setup().
+```
+lua <<EOF
+require"chezmoi".setup({
+  exec = "chezmoi.new"
+})
+EOF
+```
+Only configure 'exec' if you have installed chezmoi under a name other than 'chezmoi'. The
+given name must be in your path and executable.
+
+## Usage
 
 Whenever you save a file that is managed by chezmoi it will be 'add'ed to the chezmoi
 source state. This allows you to edit files as you normally would without thinking about 
 using 'chezmoi edit'. 
 
+### Commands
+
+There are two commands that are defined:
+* :ChezmoiAdd - this will add the current file to the chezmoi source state
+* :ChezmoiRemove - this will remove the current file from the chezmoi source state (e.g. chezmoi forget ...)
+
+## Status
+
 There is very basic statusline integration. I use lualine and I do the following in my lualine 
 config:
 ```
-function chezmoi() return require 'chezmoi'.chezmoi_status() end
+function chezmoi() return require 'chezmoi'.status() end
 ...
 require('lualine').setup{
     ...
