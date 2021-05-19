@@ -3,7 +3,7 @@ local chezmoi_bin = ''
 
 local function chezmoi(cmd)
     local f = io.popen(string.format("%s %s", chezmoi_bin, cmd))
-    local content = f:lines('*a')()
+    local content = f:lines('*l')()
     f:close()
     return content
 end
@@ -12,12 +12,20 @@ local function chezmoi_add(file)
     return chezmoi(string.format("add %s", vim.fn.shellescape(vim.fn.expand(file))))
 end
 
+local function chezmoi_apply(file)
+    return chezmoi(string.format("apply %s", vim.fn.shellescape(vim.fn.expand(file))))
+end
+
 local function chezmoi_forget(file)
     return chezmoi(string.format("forget %s", vim.fn.shellescape(vim.fn.expand(file))))
 end
 
 local function chezmoi_source_path(file)
-    return chezmoi(string.format("source-path %s", vim.fn.shellescape(vim.fn.expand(file))))
+    if file == nil then
+        return chezmoi("source-path")
+    else
+        return chezmoi(string.format("source-path %s", vim.fn.shellescape(vim.fn.expand(file))))
+    end
 end
 
 local Chezmoi = {
@@ -25,10 +33,31 @@ local Chezmoi = {
 }
 
 local defaultConf = {
-    exec = vim.g.chezmoi_exec or Chezmoi.conf.exec or 'chezmoi'
+    exec = vim.g.chezmoi_exec or Chezmoi.conf.exec or 'chezmoi',
+    auto_add = vim.g.chezmoi_auto_add or Chezmoi.conf.auto_add or true,
+    -- auto_apply = vim.g.chezmoi_auto_apply or Chezmoi.conf.auto_apply or true
 }
 
 Chezmoi.conf = defaultConf
+
+function Chezmoi.setup_add_autocmd()
+    vim.cmd[[
+        augroup chezmoi_auto_add
+            autocmd! 
+            autocmd BufWritePost * lua require'chezmoi'.save('%')
+        augroup END
+    ]]
+end
+
+-- function Chezmoi.setup_apply_autocmd()
+--     local source_path = chezmoi_source_path()
+--     vim.cmd([[
+--         augroup chezmoi_auto_apply
+--             autocmd!
+--     ]])
+--     vim.cmd(string.format("autocmd BufWritePost %s/* lua require'chezmoi'.apply('%%')", source_path))
+--     vim.cmd([[augroup END]])
+-- end
 
 function Chezmoi.setup(config)
     if config == nil then
@@ -41,6 +70,14 @@ function Chezmoi.setup(config)
     if chezmoi_bin == '' then
         api.nvim_err_writeln(string.format("Cannot find an executable named '%s'", Chezmoi.conf.exec))
     end
+
+    if Chezmoi.conf.auto_add == true then
+        Chezmoi.setup_add_autocmd()
+    end
+
+    -- if Chezmoi.conf.auto_apply == true then
+    --     Chezmoi.setup_apply_autocmd()
+    -- end
 end
 
 function Chezmoi.is_managed(file)

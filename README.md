@@ -21,12 +21,15 @@ You can pass configuration to setup().
 ```
 lua <<EOF
 require"chezmoi".setup({
-  exec = "chezmoi.new"
+  exec = "chezmoi.new",
+  auto_add = true  -- the default is true
 })
 EOF
 ```
-Only configure 'exec' if you have installed chezmoi under a name other than 'chezmoi'. The
-given name must be in your path and executable.
+Options:
+* exec: default 'chezmoi'. Only set 'exec' if you have installed chezmoi under a name other than 'chezmoi'. The given name must be in your path and executable.
+* auto_add: default 'true'. Set to 'false' if you do not want changes to chezmoi managed files to be auto-added to the
+  source state.
 
 ## Usage
 
