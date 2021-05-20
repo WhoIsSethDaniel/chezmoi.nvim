@@ -8,8 +8,8 @@ local function chezmoi(cmd)
     return content
 end
 
-local function chezmoi_add(file)
-    return chezmoi(string.format("add %s", vim.fn.shellescape(vim.fn.expand(file))))
+local function chezmoi_add(file, options)
+    return chezmoi(string.format("add %s %s", options, vim.fn.shellescape(vim.fn.expand(file))))
 end
 
 local function chezmoi_apply(file)
@@ -35,6 +35,7 @@ local Chezmoi = {
 local defaultConf = {
     exec = vim.g.chezmoi_exec or Chezmoi.conf.exec or 'chezmoi',
     auto_add = vim.g.chezmoi_auto_add or Chezmoi.conf.auto_add or true,
+    add_options = vim.g.chezmoi_add_options or Chezmoi.conf.add_options or '--empty'
     -- auto_apply = vim.g.chezmoi_auto_apply or Chezmoi.conf.auto_apply or true
 }
 
@@ -104,8 +105,16 @@ function Chezmoi.save(file)
     end
 end
 
-function Chezmoi.add(file)
-    chezmoi_add(file)
+function Chezmoi.cmdline_add(file, options)
+    if options == '' or options == nil then
+        Chezmoi.add(file)
+    else
+        Chezmoi.add(file, options)
+    end
+end
+
+function Chezmoi.add(file, options)
+    chezmoi_add(file, options or Chezmoi.conf.add_options)
 end
 
 function Chezmoi.remove(file)
