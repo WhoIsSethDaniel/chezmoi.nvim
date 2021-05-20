@@ -22,7 +22,7 @@ You can pass configuration to setup().
 lua <<EOF
 require"chezmoi".setup({
   exec = "chezmoi.new",
-  auto_add = true  -- the default is true
+  auto_add = true,  -- the default is true
   add_options = '--empty'
 })
 EOF
