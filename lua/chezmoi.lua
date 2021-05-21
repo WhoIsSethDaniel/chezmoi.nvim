@@ -9,7 +9,7 @@ local function chezmoi(cmd)
 end
 
 local function chezmoi_add(file, options)
-    return chezmoi(string.format("add %s %s", options, vim.fn.shellescape(vim.fn.expand(file))))
+    return chezmoi(string.format("add %s %s", options or '', vim.fn.shellescape(vim.fn.expand(file))))
 end
 
 local function chezmoi_apply(file)
