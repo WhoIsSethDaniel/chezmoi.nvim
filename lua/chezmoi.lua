@@ -117,7 +117,7 @@ function Chezmoi.add(file, options)
     chezmoi_add(file, options or Chezmoi.conf.add_options)
 end
 
-function Chezmoi.remove(file)
+function Chezmoi.forget(file)
     if Chezmoi.is_managed(file) then
         chezmoi_forget(file)
     end

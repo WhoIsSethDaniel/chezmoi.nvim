@@ -51,7 +51,7 @@ There are two commands that are defined:
 ```
   This will add the current file and will pass the --exact and --empty options to chezmoi. Default options may be set
   using the add_options configuration variable.
-* :ChezmoiRemove - this will remove the current file from the chezmoi source state (e.g. chezmoi forget ...)
+* :ChezmoiForget - this will remove the current file from the chezmoi source state (e.g. chezmoi forget ...)
 
 ## Status
 
