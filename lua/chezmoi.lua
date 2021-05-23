@@ -2,7 +2,7 @@ local api = vim.api
 local chezmoi_bin = ''
 
 local function chezmoi(cmd)
-    local f = io.popen(string.format("%s %s", chezmoi_bin, cmd))
+    local f = io.popen(string.format("%s %s 2>&1", chezmoi_bin, cmd))
     local content = f:lines('*l')()
     f:close()
     return content
@@ -16,8 +16,8 @@ local function chezmoi_apply(file)
     return chezmoi(string.format("apply %s", vim.fn.shellescape(vim.fn.expand(file))))
 end
 
-local function chezmoi_forget(file)
-    return chezmoi(string.format("forget %s", vim.fn.shellescape(vim.fn.expand(file))))
+local function chezmoi_forget(file, options)
+    return chezmoi(string.format("forget %s %s", options or '', vim.fn.shellescape(vim.fn.expand(file))))
 end
 
 local function chezmoi_source_path(file)
@@ -86,7 +86,7 @@ function Chezmoi.is_managed(file)
         return
     end
     local out = chezmoi_source_path(file)
-    if string.find(out, 'does not exist') == nil and string.find(out, 'outside target directory') == nil then
+    if string.find(out, 'not in source state') == nil and string.find(out, 'does not exist') == nil and string.find(out, 'outside target directory') == nil then
         return true
     else
         return false
@@ -119,7 +119,7 @@ end
 
 function Chezmoi.forget(file)
     if Chezmoi.is_managed(file) then
-        chezmoi_forget(file)
+        chezmoi_forget(file, '--force')
     end
 end
 
