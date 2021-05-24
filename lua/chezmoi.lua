@@ -82,6 +82,7 @@ function Chezmoi.setup(config)
 end
 
 function Chezmoi.is_managed(file)
+    file = vim.fn.expand(file)
     if file == nil or file == '' then
         return
     end
