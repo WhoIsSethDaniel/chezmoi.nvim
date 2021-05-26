@@ -7,7 +7,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 command! -nargs=* ChezmoiAdd lua require'chezmoi'.cmdline_add('%', "<args>")
-command! -nargs=0 ChezmoiForget lua require'chezmoi'.forget('%')
+command! -nargs=0 ChezmoiForget lua require'chezmoi'.cmdline_forget('%')
 
 let &cpo = s:cpo_save
 unlet s:cpo_save

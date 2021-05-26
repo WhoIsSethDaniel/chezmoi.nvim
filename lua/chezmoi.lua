@@ -20,6 +20,10 @@ local function chezmoi_forget(file, options)
   return chezmoi(string.format("forget %s %s", options or '', vim.fn.shellescape(vim.fn.expand(file))))
 end
 
+local function chezmoi_version()
+  return chezmoi('--version')
+end
+
 local function chezmoi_source_path(file)
   if file == nil then
     return chezmoi("source-path")
@@ -34,7 +38,6 @@ local defaultConf = {
   exec = vim.g.chezmoi_exec or Chezmoi.conf.exec or 'chezmoi',
   auto_add = vim.g.chezmoi_auto_add or Chezmoi.conf.auto_add or true,
   add_options = vim.g.chezmoi_add_options or Chezmoi.conf.add_options or '--empty'
-  -- auto_apply = vim.g.chezmoi_auto_apply or Chezmoi.conf.auto_apply or true
 }
 
 Chezmoi.conf = defaultConf
@@ -48,16 +51,6 @@ function Chezmoi.setup_add_autocmd()
     ]]
 end
 
--- function Chezmoi.setup_apply_autocmd()
---     local source_path = chezmoi_source_path()
---     vim.cmd([[
---         augroup chezmoi_auto_apply
---             autocmd!
---     ]])
---     vim.cmd(string.format("autocmd BufWritePost %s/* lua require'chezmoi'.apply('%%')", source_path))
---     vim.cmd([[augroup END]])
--- end
-
 function Chezmoi.setup(config)
   if config == nil then
     return
@@ -67,16 +60,24 @@ function Chezmoi.setup(config)
   end
   chezmoi_bin = vim.fn.exepath(Chezmoi.conf.exec)
   if chezmoi_bin == '' then
-    api.nvim_err_writeln(string.format("Cannot find an executable named '%s'", Chezmoi.conf.exec))
+    api.nvim_echo({ string.format("chezmoi.nvim: cannot find an executable named '%s'", Chezmoi.conf.exec), 'ErrorMsg' }, true, {})
+    return
   end
 
   if Chezmoi.conf.auto_add == true then
     Chezmoi.setup_add_autocmd()
   end
 
-  -- if Chezmoi.conf.auto_apply == true then
-  --     Chezmoi.setup_apply_autocmd()
-  -- end
+  local v = Chezmoi.version()
+  if v.major ~= 2 then
+    api.nvim_echo({
+      {
+        string.format('chezmoi.nvim: chezmoi major version is not 2. chezmoi.nvim probably won\'t work. exec = %s; version = %d', chezmoi_bin, v.major),
+        'ErrorMsg'
+      }
+    }, true, {})
+    return
+  end
 end
 
 function Chezmoi.is_managed(file)
@@ -98,10 +99,19 @@ function Chezmoi.status()
   end
 end
 
-function Chezmoi.save(file)
-  if Chezmoi.is_managed(file) then
-    chezmoi_add(file)
+function Chezmoi.version()
+  local vstr = chezmoi_version()
+  local maj, min, patch = string.match(vstr, '^chezmoi version v(%d+)%.(%d+)%.(%d+)')
+  if maj == nil then
+    maj = 0
+    min = 0
+    patch = 0
+  else
+    maj = tonumber(maj)
+    min = tonumber(min)
+    patch = tonumber(patch)
   end
+  return { major = maj, minor = min, patch = patch }
 end
 
 function Chezmoi.cmdline_add(file, options)
@@ -112,6 +122,12 @@ function Chezmoi.cmdline_add(file, options)
   end
 end
 
+function Chezmoi.cmdline_forget(file)
+  if Chezmoi.is_managed(file) then
+    Chezmoi.forget(file)
+  end
+end
+
 function Chezmoi.add(file, options)
   chezmoi_add(file, options or Chezmoi.conf.add_options)
 end
@@ -119,6 +135,12 @@ end
 function Chezmoi.forget(file)
   if Chezmoi.is_managed(file) then
     chezmoi_forget(file, '--force')
+  end
+end
+
+function Chezmoi.save(file)
+  if Chezmoi.is_managed(file) then
+    chezmoi_add(file)
   end
 end
 
