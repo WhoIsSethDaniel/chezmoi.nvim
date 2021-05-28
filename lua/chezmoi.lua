@@ -44,11 +44,11 @@ Chezmoi.conf = defaultConf
 
 function Chezmoi.setup_add_autocmd()
   vim.cmd [[
-        augroup chezmoi_auto_add
-            autocmd! 
-            autocmd BufWritePost * lua require'chezmoi'.save('%')
-        augroup END
-    ]]
+    augroup chezmoi_auto_add
+        autocmd! 
+        autocmd BufWritePost * lua require'chezmoi'.save('%')
+    augroup END
+  ]]
 end
 
 function Chezmoi.setup(config)
@@ -83,6 +83,9 @@ end
 function Chezmoi.is_managed(file)
   file = vim.fn.expand(file)
   if file == nil or file == '' then
+    return
+  end
+  if vim.fn.isdirectory(file) == 1 then
     return
   end
   local out = chezmoi_source_path(file)
