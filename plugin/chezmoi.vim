@@ -1,4 +1,4 @@
-if exists("g:chezmoi_loaded_install")
+if exists('g:chezmoi_loaded_install')
   finish
 endif
 let g:chezmoi_loaded_install = 1

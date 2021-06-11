@@ -108,6 +108,10 @@ function Chezmoi.is_managed(file)
   end
 end
 
+function Chezmoi.clear_cache()
+  Chezmoi.cached_status = nil
+end
+
 function Chezmoi.status()
   if Chezmoi.cached_status == nil then
     if Chezmoi.is_managed('%') then
@@ -151,17 +155,20 @@ end
 
 function Chezmoi.add(file, options)
   chezmoi_add(file, options or Chezmoi.conf.add_options)
+  Chezmoi.clear_cache()
 end
 
 function Chezmoi.forget(file)
   if Chezmoi.is_managed(file) then
     chezmoi_forget(file, '--force')
+    Chezmoi.clear_cache()
   end
 end
 
 function Chezmoi.save(file)
   if Chezmoi.is_managed(file) then
     chezmoi_add(file)
+    Chezmoi.clear_cache()
   end
 end
 
