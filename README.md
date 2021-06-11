@@ -2,8 +2,6 @@
 
 [chezmoi](https://github.com/twpayne/chezmoi) integration with NeoVim.
 
-(currently very primitive)
-
 ## Installation
 
 Install this plugin like any other plugin. Make certain you have [chezmoi](https://github.com/twpayne/chezmoi) 
