@@ -95,9 +95,8 @@ function Chezmoi.setup(config)
 end
 
 function Chezmoi.is_managed(file)
-  file = vim.fn.expand(file)
   if file == nil or file == '' then
-    return
+    return false
   end
   local out = chezmoi_source_path(file)
   if string.find(out, 'not in') == nil and string.find(out, 'does not exist')
@@ -113,20 +112,21 @@ function Chezmoi.clear_cache()
 end
 
 function Chezmoi.status()
-  if Chezmoi.cached_status == nil then
-    if Chezmoi.is_managed('%') then
+  local file = vim.fn.expand('%')
+  if Chezmoi.cached_status == nil or file ~= Chezmoi.cached_status_file then
+    if Chezmoi.is_managed(file) then
       Chezmoi.cached_status = '[CM]'
     else
       Chezmoi.cached_status = ''
     end
+    Chezmoi.cached_status_file = file
   end
   return Chezmoi.cached_status
 end
 
 function Chezmoi.version()
   local vstr = chezmoi_version()
-  local maj, min, patch = string.match(vstr,
-                                       '^chezmoi version v(%d+)%.(%d+)%.(%d+)')
+  local maj, min, patch = string.match(vstr, '^chezmoi version v(%d+)%.(%d+)%.(%d+)')
   if maj == nil then
     maj = 0
     min = 0
