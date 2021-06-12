@@ -4,6 +4,13 @@
 and have changes automatically placed in the Chezmoi source state. Also add and remove files from Chezmoi
 source state from within Neovim.
 
+This shows editing of a file that is Chezmoi managed (notice the [CM] in the status bar) followed by
+editing a file that is not Chezmoi managed (notice no [CM] in the status bar).
+<img src="https://github.com/WhoIsSethDaniel/public-assets/blob/main/chezmoi-managed-1.gif">
+
+This shows the commands that add and forget the current file. 
+<img src="https://github.com/WhoIsSethDaniel/public-assets/blob/main/chezmoi-managed-2.gif">
+
 ## Compatibility
 Neovim >= 0.5.0
 
