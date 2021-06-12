@@ -55,11 +55,10 @@ using 'chezmoi edit'.
 ### Commands
 
 There are two commands that are defined:
-* `:ChezmoiAdd`: this will add the current file to the chezmoi source state. Pass options the same way you would pass them to chezmoi. e.g.
+* `:ChezmoiAdd`: this will add the current file to the chezmoi source state. Pass options the same way you would pass them to chezmoi. This will add the current file and will pass the --exact and --empty options to chezmoi. Default options may be set using the add_options configuration variable. e.g.:
 ```vim
 :ChezmoiAdd --empty --exact
 ```
-This will add the current file and will pass the --exact and --empty options to chezmoi. Default options may be set using the add_options configuration variable.
 * `:ChezmoiForget`: this will remove the current file from the chezmoi source state (e.g. chezmoi forget ...)
 
 ## Status Line
