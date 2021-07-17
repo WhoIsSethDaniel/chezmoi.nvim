@@ -2,7 +2,7 @@ local api = vim.api
 local chezmoi_bin = ''
 
 local function chezmoi(cmd)
-  local fcmd = string.format("%s %s 2>&1", chezmoi_bin, cmd)
+  local fcmd = string.format('%s %s 2>&1', chezmoi_bin, cmd)
   local out = vim.fn.system(fcmd)
   if vim.v.shell_error ~= 0 then
     -- api.nvim_err_writeln(string.format("chezmoi error: %s: %s", fcmd, out))
@@ -12,30 +12,26 @@ local function chezmoi(cmd)
 end
 
 local function chezmoi_add(file, options)
-  return chezmoi(string.format("add %s %s", options or '',
-                               vim.fn.shellescape(vim.fn.expand(file))))
+  return chezmoi(string.format('add %s %s', options or '', vim.fn.shellescape(vim.fn.expand(file))))
 end
 
 local function chezmoi_apply(file)
-  return chezmoi(string.format("apply %s",
-                               vim.fn.shellescape(vim.fn.expand(file))))
+  return chezmoi(string.format('apply %s', vim.fn.shellescape(vim.fn.expand(file))))
 end
 
 local function chezmoi_forget(file, options)
-  return chezmoi(string.format("forget %s %s", options or '',
-                               vim.fn.shellescape(vim.fn.expand(file))))
+  return chezmoi(string.format('forget %s %s', options or '', vim.fn.shellescape(vim.fn.expand(file))))
 end
 
 local function chezmoi_version()
-  return chezmoi('--version')
+  return chezmoi '--version'
 end
 
 local function chezmoi_source_path(file)
   if file == nil then
-    return chezmoi("source-path")
+    return chezmoi 'source-path'
   else
-    return chezmoi(string.format("source-path %s",
-                                 vim.fn.shellescape(vim.fn.expand(file))))
+    return chezmoi(string.format('source-path %s', vim.fn.shellescape(vim.fn.expand(file))))
   end
 end
 
@@ -44,8 +40,7 @@ local Chezmoi = { conf = {} }
 local defaultConf = {
   exec = vim.g.chezmoi_exec or Chezmoi.conf.exec or 'chezmoi',
   auto_add = vim.g.chezmoi_auto_add or Chezmoi.conf.auto_add or true,
-  add_options = vim.g.chezmoi_add_options or Chezmoi.conf.add_options
-      or '--empty'
+  add_options = vim.g.chezmoi_add_options or Chezmoi.conf.add_options or '--empty',
 }
 
 Chezmoi.conf = defaultConf
@@ -69,9 +64,8 @@ function Chezmoi.setup(config)
   chezmoi_bin = vim.fn.exepath(Chezmoi.conf.exec)
   if chezmoi_bin == '' then
     api.nvim_echo({
-      string.format("chezmoi.nvim: cannot find an executable named '%s'",
-                    Chezmoi.conf.exec),
-      'ErrorMsg'
+      string.format("chezmoi.nvim: cannot find an executable named '%s'", Chezmoi.conf.exec),
+      'ErrorMsg',
     }, true, {})
     return
   end
@@ -85,10 +79,12 @@ function Chezmoi.setup(config)
     api.nvim_echo({
       {
         string.format(
-            'chezmoi.nvim: chezmoi major version is not 2. chezmoi.nvim probably won\'t work. exec = %s; version = %d',
-            chezmoi_bin, v.major),
-        'ErrorMsg'
-      }
+          "chezmoi.nvim: chezmoi major version is not 2. chezmoi.nvim probably won't work. exec = %s; version = %d",
+          chezmoi_bin,
+          v.major
+        ),
+        'ErrorMsg',
+      },
     }, true, {})
     return
   end
@@ -99,8 +95,11 @@ function Chezmoi.is_managed(file)
     return false
   end
   local out = chezmoi_source_path(file)
-  if string.find(out, 'not in') == nil and string.find(out, 'does not exist')
-      == nil and string.find(out, 'outside target directory') == nil then
+  if
+    string.find(out, 'not in') == nil
+    and string.find(out, 'does not exist') == nil
+    and string.find(out, 'outside target directory') == nil
+  then
     return true
   else
     return false
@@ -112,7 +111,7 @@ function Chezmoi.clear_cache()
 end
 
 function Chezmoi.status()
-  local file = vim.fn.expand('%')
+  local file = vim.fn.expand '%'
   if Chezmoi.cached_status == nil or file ~= Chezmoi.cached_status_file then
     if Chezmoi.is_managed(file) then
       Chezmoi.cached_status = '[CM]'
